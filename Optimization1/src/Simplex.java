@@ -2,8 +2,25 @@ public class Simplex {
     public void maximize(double[] C, double[][] A, double[] b, double eps,boolean flag){
         if (!isCorrectInput(b)) return;
 
-        addSlack(C, A);
-        int value = 0; // the value of Z line.
+        for (int i = 0; i < C.length; i++){
+            C[i]  *= -1;
+        }
+
+        int numConstraints = A.length;
+        int numVariables = A[0].length;
+
+        double[] newC = new double[numVariables + numConstraints];
+        System.arraycopy(C, 0, newC, 0, numVariables);
+        C = newC;
+
+        double[][] newA = new double[numConstraints][numVariables + numConstraints];
+        for (int i = 0; i < numConstraints; i++) {
+            System.arraycopy(A[i], 0, newA[i], 0, numVariables);
+            newA[i][numVariables + i] = 1; // Add slack variable
+        }
+        A = newA;
+
+        double value = 0; // the value of Z line.
         while (true) {
             int enteringIndex = getEnteringVariable(C);
             if(enteringIndex==-1){
@@ -15,11 +32,11 @@ public class Simplex {
                 return;
             }
 
-            pivot(A, b, C, enteringIndex, leavingIndex,value);
+            value = pivot(A, b, C, enteringIndex, leavingIndex,value);
         }
 
-        double[] z = new double[A[0].length - b.length]; // Without slack variables
-        for (int i = 0; i < C.length; i++) {
+        double[] z = new double[numVariables]; // Without slack variables
+        for (int i = 0; i < numVariables; i++) {
             z[i] = C[i]; // Assuming standard form
         }
         if(flag){
@@ -62,6 +79,7 @@ public class Simplex {
             if (b[i] > 0){
                 if (minRation == 0 || minRation > b[i] / A[i][index]){
                     minRation = b[i] / A[i][index];
+                    leavingIndex = i;
                 }
             }
         }
@@ -74,7 +92,7 @@ public class Simplex {
         double minVar =0;
         for (int i = 0; i < C.length; i++){
             if (C[i] < 0){
-                if (minVar<C[i]){
+                if (minVar>C[i]){
                     minVar = C[i];
                     enteringIndex = i;
                 }
@@ -83,23 +101,8 @@ public class Simplex {
         return enteringIndex;
     }
 
-    private void addSlack(double[] C, double[][] A){
-        int numConstraints = A.length;
-        int numVariables = A[0].length;
 
-        double[] newC = new double[numVariables + numConstraints];
-        System.arraycopy(C, 0, newC, 0, numVariables);
-        C = newC;
-
-        double[][] newA = new double[numConstraints][numVariables + numConstraints];
-        for (int i = 0; i < numConstraints; i++) {
-            System.arraycopy(A[i], 0, newA[i], 0, numVariables);
-            newA[i][numVariables + i] = 1; // Add slack variable
-        }
-        A = newA;
-    }
-
-    private void pivot(double[][] A, double[] b, double[] C, int enteringIndex, int leavingIndex, double value) {
+    private double pivot(double[][] A, double[] b, double[] C, int enteringIndex, int leavingIndex, double value) {
 
         double pivotVar = A[leavingIndex][enteringIndex];
 
@@ -127,6 +130,7 @@ public class Simplex {
             C[i] -= multiplier*A[leavingIndex][i];
         }
         value -= multiplier*b[leavingIndex];
+        return value;
     }
     private void output(double[] x, double value){
         for (int i = 1; i < x.length + 1; i++){
