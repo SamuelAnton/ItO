@@ -1,7 +1,7 @@
 public class Main {
     public static void main(String[] args) {
         Simplex simplex = new Simplex();
-        int eps = 3;
+        double eps = 0.001;
         // Test 1
         // Answer: F*(0, 8, 20) = 400
         System.out.println("Test 1:");

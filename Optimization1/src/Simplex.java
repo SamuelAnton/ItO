@@ -1,5 +1,5 @@
 public class Simplex {
-    public void maximize(double[] C, double[][] A, double[] b, int eps, boolean flag){
+    public void maximize(double[] C, double[][] A, double[] b, double eps, boolean flag){
         if (!isCorrectInput(b)) return;
 
         for (int i = 0; i < C.length; i++){
@@ -39,7 +39,9 @@ public class Simplex {
             zColumn[leavingIndex] = enteringIndex;
             value = pivot(A, b, C, enteringIndex, leavingIndex,value);
             for (int i = 0; i < C.length; i++){
-                C[i] = round(C[i], eps);
+                if (C[i] < 0 && C[i] > eps * -1){
+                    C[i] = 0;
+                }
             }
         }
 
@@ -48,9 +50,8 @@ public class Simplex {
             if (zColumn[i] > numVariables){
                 continue;
             }
-            z[zColumn[i]] = round(b[i], eps);
+            z[zColumn[i]] = b[i];
         }
-        value = round(value, eps);
         if(flag){
             output(z,-value); // for minimisation
         }else{
@@ -58,11 +59,11 @@ public class Simplex {
         }
     }
 
-    public void maximize(double[] C, double[][] A, double[] b, int eps) {
+    public void maximize(double[] C, double[][] A, double[] b, double eps) {
         maximize(C, A, b, eps, false);
     }
 
-    public void minimize(double[] C, double[][] A, double[] b, int eps){
+    public void minimize(double[] C, double[][] A, double[] b, double eps){
         double[] negC = new double[C.length];
         for (int i = 0; i < C.length; i++) {
             negC[i] = -C[i]; // Convert minimization to maximization
@@ -147,19 +148,5 @@ public class Simplex {
             System.out.println("x" + i + " = " + x[i - 1]);
         }
         System.out.println("Optimized value of objective function: " + value);
-    }
-
-    private double round(double d, double eps){
-        for (int i = 0; i < eps; i++){
-            d *= 10;
-        }
-        if (d % 1 >= 0.5){
-            d += 1;
-        }
-        d -= d % 1;
-        for (int i = 0; i < eps; i++){
-            d /= 10;
-        }
-        return d;
     }
 }
