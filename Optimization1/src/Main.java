@@ -1,7 +1,7 @@
 public class Main {
     public static void main(String[] args) {
         Simplex simplex = new Simplex();
-        double eps = 0.001;
+        int eps = 3;
         // Test 1
         // Answer: F*(0, 8, 20) = 400
         System.out.println("Test 1:");
@@ -37,7 +37,7 @@ public class Main {
                 {3, 2, 4}
         };
         double[] b3 = {8, 10, 15};
-            simplex.maximize(C3, A3, b3, eps);
+        simplex.maximize(C3, A3, b3, eps);
 
         // Test 4
         // Answer: F*(138.2, 23.6) = 8326
