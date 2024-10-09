@@ -47,13 +47,13 @@ public class Simplex {
 
         double[] z = new double[numVariables];
         for (int i = 0; i < numConstraints; i++) {
-            if (zColumn[i] > numVariables){
+            if (zColumn[i] >= numVariables){
                 continue;
             }
             z[zColumn[i]] = b[i];
         }
         if(flag){
-            output(z,-value); // for minimisation
+            output(z,-1 * value); // for minimisation
         }else{
             output(z, value);
         }

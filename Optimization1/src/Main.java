@@ -63,5 +63,28 @@ public class Main {
         };
         double[] b5 = {100, 77, 80};
         simplex.maximize(C5, A5, b5, eps);
+
+        // Test 6
+        // Answer: The system has no solutions or has many solutions.
+        System.out.println("\nTest 6:");
+        double[] C6 = {2, 1};
+        double[][] A6 = {
+                {1, -1},
+                {2, -1}
+        };
+        double[] b6 = {10, 40};
+        simplex.maximize(C6, A6, b6, eps);
+
+        // Test 7
+        // Answer: F* (0, 0, 0) = 0
+        System.out.println("\nTest 7:");
+        double[] c7 = {12, 3, 1};
+        double[][] A7 = {
+                {10, 2, 1},
+                {7, 3, 2},
+                {2, 4, 1}
+        };
+        double[] b7 = {100, 77, 80};
+        simplex.minimize(c7, A7, b7, eps);
     }
 }
