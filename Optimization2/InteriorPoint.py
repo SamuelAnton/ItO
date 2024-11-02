@@ -24,7 +24,7 @@ class InteriorPoint:
     
     # Given initial point
     def minimize(self, *, A:matrix, c:matrix, b:matrix, alpha:float=0.5, eps:float=0.001, x:matrix):
-        c = -1 * c
+        return self.maximize(A=A, c=-1 * c, b=array([]), alpha=0.5, eps=0.0001, x=x)
 
 
 if __name__ == "__main__":
@@ -32,4 +32,4 @@ if __name__ == "__main__":
     A = array([[2, 4, 1, 0], [1, 3, 0, -1]], float)
     c = array([1, 1, 0, 0])
     i = InteriorPoint()
-    i.maximize(A=A, c=c, b=array([]), alpha=0.5, eps=0.0001, x=x)
+    print(i.minimize(A=A, c=c, b=array([]), alpha=0.5, eps=0.0001, x=x))
