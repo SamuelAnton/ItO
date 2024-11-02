@@ -4,7 +4,7 @@ from numpy import *
 class InteriorPoint:
     # Given initial point
     def maximize(self, *, A:matrix, c:matrix, b:matrix, alpha:float=0.5, eps:float=0.001, x:matrix):
-        i = 1
+        y = 1
         while (True):
             prevX = x
             D = diag(x)
@@ -16,12 +16,17 @@ class InteriorPoint:
             x_ = add(ones(len(A_[0])), cp * (alpha / v))
             x = dot(D, x_)
 
+            y += 1
 
             if linalg.norm(subtract(prevX, x), ord=2) < eps:
                 for i in range(len(x)):
                     x[i] = "{:.2f}".format(round(x[i], len(str(eps)) - 2))
                 return x
-                break
+            
+            if (y >= 10000):
+                return "The problem does not have solution or has many solutions."
+
+
     
     # Given initial point
     def minimize(self, *, A:matrix, c:matrix, b:matrix, alpha:float=0.5, eps:float=0.001, x:matrix):
@@ -32,15 +37,16 @@ if __name__ == "__main__":
     ip = InteriorPoint()
     eps = 0.001
 
-    # Test 1
-    print("Test 1:")
-    C1 = array([9, 10, 16, 0, 0, 0], float)
-    A1 = array([
-        [18, 15, 12, 1, 0, 0],
-        [6, 4, 8, 0, 1, 0],
-        [5, 3, 3, 0, 0, 1]
+    print("\nTest 6:")
+    C6 = array([2, 1, 0, 0], float)
+    A6 = array([
+        [1, -1, 1, 0],
+        [2, -1, 0, 1]
     ], float)
-    b1 = array([360, 192, 180], float)
-    x1_initial = array([1.0, 1.0, 1.0, 315, 174, 169], float)
-    result1 = ip.maximize(A=A1, c=C1, b=b1, alpha=0.5, eps=eps, x=x1_initial)
-    print(f"Interior-Point Solution for Test 1: x* = {result1}")    
+    b6 = array([10, 40], float)
+    x6_initial = array([1.0, 1.0, 10, 39], float)
+    result6_alpha_05 = ip.maximize(A=A6, c=C6, b=b6, alpha=0.5, eps=eps, x=x6_initial)
+    result6_alpha_09 = ip.maximize(A=A6, c=C6, b=b6, alpha=0.9, eps=eps, x=x6_initial)
+    print(f"Interior-Point Solution with alpha=0.5: X* = {result6_alpha_05[:2]}")
+    print(f"Interior-Point Solution with alpha=0.9: X* = {result6_alpha_09[:2]}")
+    print("Expected Output: The system has no solutions or has many solutions.")
