@@ -6,6 +6,7 @@ class InteriorPoint:
     def maximize(self, *, A:matrix, c:matrix, b:matrix, alpha:float=0.5, eps:float=0.001, x:matrix):
         i = 1
         while (True):
+            prevX = x
             D = diag(x)
             A_ = dot(A, D)
             c_ = dot(D, c)
@@ -13,39 +14,21 @@ class InteriorPoint:
             cp = dot(P, c_)
             v = absolute(min(cp))
             x_ = add(ones(len(A_[0])), cp * (alpha / v))
+            x = dot(D, x_)
 
-            if linalg.norm(subtract(x_, x)) < eps:
-                print(x_)
+            if linalg.norm(subtract(prevX, x), ord=2) < eps:
+                print(x)
                 break
-
-            x = x_
-
-            if i in [1, 2, 3, 4]:
-                print("In iteration", i, "we have x =", x)
-                i += 1
-
-    # # Not given initial point
-    # def maximize(self, *, A:matrix, c:matrix, b:matrix, alpha:float=0.5, eps:float=0.001):
-    #     self.maximize(A=A, c=c, b=b, alpha=alpha, eps=eps, x=self.findInitialPoint(A=A, b=b))
     
     # Given initial point
     def minimize(self, *, A:matrix, c:matrix, b:matrix, alpha:float=0.5, eps:float=0.001, x:matrix):
         #TODO
         pass
 
-    # Not given initial point
-    def minimize(self, *, A:matrix, c:matrix, b:matrix, alpha:float=0.5, eps:float=0.001):
-        self.minimize(A=A, c=c, b=b, alpha=alpha, eps=eps, x=self.findInitialPoint(A=A, b=b))
-    
-    def findInitialPoint(self, *, A:matrix, b:matrix):
-        #TODO
-        pass  
-
-
 
 if __name__ == "__main__":
-    x = array([2, 2, 3, 4], float)
-    A = array([[2, -2, 8, 0], [-6, -1, 0, -1]], float)
-    c = array([-2, 3, 0, 0])
+    x = array([0.5, 3.5, 1, 2], float)
+    A = array([[2, 4, 1, 0], [1, 3, 0, -1]], float)
+    c = array([1, 1, 0, 0])
     i = InteriorPoint()
     i.maximize(A=A, c=c, b=array([]), alpha=0.5, eps=0.0001, x=x)
