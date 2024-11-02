@@ -17,13 +17,14 @@ class InteriorPoint:
             x = dot(D, x_)
 
             if linalg.norm(subtract(prevX, x), ord=2) < eps:
-                print(x)
+                for i in range(len(x)):
+                    x[i] = round(x[i], len(str(eps)) - 2)
+                return x
                 break
     
     # Given initial point
     def minimize(self, *, A:matrix, c:matrix, b:matrix, alpha:float=0.5, eps:float=0.001, x:matrix):
-        #TODO
-        pass
+        c = -1 * c
 
 
 if __name__ == "__main__":
