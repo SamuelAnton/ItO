@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+
+
 public class TransportationProblem {
     public void initialBasicVariable(double[] S, double[] D, double[][] C){
         if (checkApplicability(S, D, C)){
@@ -9,10 +12,15 @@ public class TransportationProblem {
             return;
         }
 
+        System.out.println("\nInitial problem:\n");
+
         demonstrate(S, D, C);
 
         System.out.println("\nNorth-West corner method solution:\n");
         demonstrate(S, D, northWest(S, D));
+
+        System.out.println("\nVogel's approximation method solution:\n");
+        demonstrate(S, D, vogel(S.clone(), D.clone(), C.clone()));
     }
 
     private boolean checkBalance(double[] S, double[] D){
@@ -102,6 +110,149 @@ public class TransportationProblem {
                 curSup = S[i];
             }
         }
+        return answ;
+    }
+
+    private double[][] vogel(double[] S, double[] D, double[][] C){
+        double[][] answ = new double[S.length][D.length];
+        double[] rows = new double[S.length];
+        double[] cols = new double[D.length];
+        while (true) {
+            rows = new double[S.length];
+            cols = new double[D.length];
+            double min1;
+            double min2;
+            for (int i = 0; i < S.length; i++) {
+                min1 = -1;
+                min2 = -1;
+                for (int j = 0; j < D.length; j++){
+                    if (C[i][j] == -1){
+                        continue;
+                    }
+                    if (min1 == -1 || min1 > C[i][j]){
+                        min2 = min1;
+                        min1 = C[i][j];
+                    }
+                    else if (min2 == -1 || min2 > C[i][j]){
+                        min2 = C[i][j];
+                    }
+                }
+                if (min1 == -1){
+                    rows[i] = -1;
+                }
+                else if (min2 == -1){
+                    rows[i] = min1;
+                }
+                else {
+                    rows[i] = min2 - min1;
+                }
+            }
+
+            for (int j = 0; j < D.length; j++){
+                min1 = -1;
+                min2 = -1;
+                for (int i = 0; i < S.length; i++){
+                    if (C[i][j] == -1){
+                        continue;
+                    }
+                    if (min1 == -1 || min1 > C[i][j]){
+                        min2 = min1;
+                        min1 = C[i][j];
+                    }
+                    else if (min2 == -1 || min2 > C[i][j]){
+                        min2 = C[i][j];
+                    }
+                }
+                if (min1 == -1){
+                    cols[j] = -1;
+                }
+                else if (min2 == -1){
+                    cols[j] = min1;
+                }
+                else {
+                    cols[j] = min2 - min1;
+                }
+            }
+
+            double min = -1;
+            int ind = -1;
+            boolean isRow = true;
+            for (int i = 0; i < rows.length; i++){
+                if (rows[i] == -1){
+                    continue;
+                }
+                if (min == -1 || min < rows[i]){
+                    min = rows[i];
+                    ind = i;
+                }
+            }
+            for (int i = 0; i < cols.length; i++){
+                if (cols[i] == -1){
+                    continue;
+                }
+                if (min == -1 || min < cols[i]){
+                    isRow = false;
+                    min = cols[i];
+                    ind = i;
+                }
+            }
+
+            if (min == -1){
+                break;
+            }
+
+            min = -1;
+            int elementInd = -1;
+            if (isRow){
+                for (int i = 0; i < D.length; i++){
+                    if (C[ind][i] == -1){
+                        continue;
+                    }
+                    if (min == -1 || min > C[ind][i]){
+                        min = C[ind][i];
+                        elementInd = i;
+                    }
+                }
+            }
+            else {
+                for (int i = 0; i < S.length; i++){
+                    if (C[i][ind] == -1){
+                        continue;
+                    }
+                    if (min == -1 || min > C[i][ind]){
+                        min = C[i][ind];
+                        elementInd = i;
+                    }
+                }
+
+                int temp = elementInd;
+                elementInd = ind;
+                ind = temp;
+            }
+
+            if (S[ind] >= D[elementInd]){
+                answ[ind][elementInd] = D[elementInd];
+                S[ind] -= D[elementInd];
+                D[elementInd] = 0;
+            }
+            else {
+                answ[ind][elementInd] = S[ind];
+                D[elementInd] -= S[ind];
+                S[ind] = 0;
+            }
+
+            if (S[ind] == 0) {
+                for (int i = 0; i < D.length; i++){
+                    C[ind][i] = -1;
+                }
+            }
+            if (D[elementInd] == 0){
+                for (int i = 0; i < S.length; i++){
+                    C[i][elementInd] = -1;
+                }
+            }
+        }
+
         return answ;
     }
 }
