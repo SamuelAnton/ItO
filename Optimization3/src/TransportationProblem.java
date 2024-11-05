@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-
-
 public class TransportationProblem {
     public void initialBasicVariable(double[] S, double[] D, double[][] C){
         if (checkApplicability(S, D, C)){
@@ -20,7 +17,10 @@ public class TransportationProblem {
         demonstrate(S, D, northWest(S, D));
 
         System.out.println("\nVogel's approximation method solution:\n");
-        demonstrate(S, D, vogel(S.clone(), D.clone(), C.clone()));
+        demonstrate(S, D, vogel(copy(S), copy(D), copy(C)));
+
+        System.out.println("\nRussel's aproximation method solution:\n");
+        demonstrate(S, D, russle(copy(S), copy(D), copy(C)));
     }
 
     private boolean checkBalance(double[] S, double[] D){
@@ -253,6 +253,105 @@ public class TransportationProblem {
             }
         }
 
+        return answ;
+    }
+
+    private double[][] russle(double[] S, double[] D, double[][] C){
+        double[][] answ = new double[S.length][D.length];
+        while (true) {
+            double[] u = new double[S.length];
+            double[] v = new double[D.length];
+
+            double max;
+            for (int i = 0; i < S.length; i++){
+                max = -1;
+                for (int j = 0; j < D.length; j++){
+                    if (C[i][j] == -1){
+                        continue;
+                    }
+                    if (max == -1 || max < C[i][j]){
+                        max = C[i][j];
+                    }
+                }
+                u[i] = max;
+            }
+
+            for (int j = 0; j < D.length; j++){
+                max = -1;
+                for (int i = 0; i < S.length; i++){
+                    if (C[i][j] == -1){
+                        continue;
+                    }
+                    if (max == -1 || max < C[i][j]){
+                        max = C[i][j];
+                    }
+                }
+                v[j] = max;
+            }
+
+            double[][] delta = copy(C);
+
+            int row = -1;
+            int col = -1;
+            double min = 0;
+            for (int i = 0; i < S.length; i++){
+                for (int j = 0; j < D.length; j++){
+                    if (delta[i][j] == -1){
+                        continue;
+                    }
+                    delta[i][j] -= u[i] + v[j];
+                    if (min == 0 || min > delta[i][j]){
+                        min = delta[i][j];
+                        row = i;
+                        col = j;
+                    }
+                }
+            }
+
+            if (row == -1){
+                break;
+            }
+
+            if (S[row] >= D[col]){
+                answ[row][col] = D[col];
+                S[row] -= D[col];
+                D[col] = 0;
+            }
+            else {
+                answ[row][col] = S[row];
+                D[col] -= S[row];
+                S[row] = 0;
+            }
+            if (S[row] == 0){
+                for (int i = 0; i < D.length; i++){
+                    C[row][i] = -1;
+                }
+            }
+            if (D[col] == 0){
+                for (int i = 0; i < S.length; i++){
+                    C[i][col] = -1;
+                }
+            }
+        }
+
+        return answ;
+    }
+
+    private double[] copy(double[] d){
+        double[] answ = new double[d.length];
+        for (int i = 0; i < d.length; i++){
+            answ[i] = d[i];
+        }
+        return answ;
+    }
+
+    private double[][] copy(double[][] d){
+        double[][] answ = new double[d.length][d[0].length];
+        for (int i = 0; i < d.length; i++){
+            for (int j = 0; j < d[0].length; j++){
+                answ[i][j] = d[i][j];
+            }
+        }
         return answ;
     }
 }
