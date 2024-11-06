@@ -3,14 +3,14 @@ public class Optimization3 {
         TransportationProblem t = new TransportationProblem();
 
         double[] S1 = {140, 180, 160};
-        double[] D1 = {60, 70, 120, 130, 100};
+        double[] D1 = {85, 95, 145, 155};
         double[][] C1 = {
-                {2, 3, 4, 2, 4},
-                {8, 4, 1, 4, 1},
-                {9, 7, 3, 7, 2}};
-        // Northwest: 1380
-        // Vogel: 1260
-        // Russel: 1420
+                {2, 3, 4, 2},
+                {8, 4, 1, 4},
+                {9, 7, 3, 7}};
+        // Northwest: 1735
+        // Vogel: 1540
+        // Russel: 1540
         t.initialBasicVariable(S1, D1, C1);
 
         double[] S2 = {160, 140, 170};
